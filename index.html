@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HustleShop Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 15px;
+            margin: 0;
+        }
+        h2 { text-align: center; margin-bottom: 20px; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            background: var(--tg-theme-secondary-bg-color, #f9f9f9);
+        }
+        .card img {
+            width: 100%;
+            border-radius: 8px;
+            height: 110px;
+            object-fit: cover;
+        }
+        .card h4 { margin: 8px 0 4px; font-size: 14px; }
+        .card p { margin: 0 0 8px; font-weight: bold; color: #2481cc; }
+        button {
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🛍️ HustleShop Mini</h2>
+
+    <div class="grid">
+        <div class="card">
+            <img src="https://picsum.photos/seed/pepe/200/200" alt="Rare Pepe">
+            <h4>Rare Pepe NFT</h4>
+            <p>5 000 ₸</p>
+            <button onclick="selectProduct('Rare Pepe NFT', 5000)">Купить</button>
+        </div>
+        <div class="card">
+            <img src="https://picsum.photos/seed/duck/200/200" alt="Telegram Duck">
+            <h4>Telegram Duck NFT</h4>
+            <p>10 000 ₸</p>
+            <button onclick="selectProduct('Telegram Duck NFT', 10000)">Купить</button>
+        </div>
+        <div class="card">
+            <img src="https://picsum.photos/seed/cat/200/200" alt="Cyber Cat">
+            <h4>Cyber Cat NFT</h4>
+            <p>15 000 ₸</p>
+            <button onclick="selectProduct('Cyber Cat NFT', 15000)">Купить</button>
+        </div>
+        <div class="card">
+            <img src="https://picsum.photos/seed/star/200/200" alt="500 Stars">
+            <h4>500 Stars</h4>
+            <p>5 200 ₸</p>
+            <button onclick="selectProduct('500 Telegram Stars', 5200)">Купить</button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function selectProduct(name, price) {
+            tg.sendData(JSON.stringify({ product: name, price: price }));
+            tg.close();
+        }
+    </script>
+</body>
+</html>
