@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HustleShop Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #0d0e12;
+            color: #ffffff;
+            padding: 16px;
+            padding-bottom: 95px;
+        }
+
+        /* Шапка */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 19px;
+            color: #ffffff;
+        }
+        .avatar {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #f59e0b, #eab308);
+            color: #000000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Селектор валюты */
+        .currency-select {
+            background: #16181f;
+            border: 1px solid #282c38;
+            color: #fbbf24;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Способы оплаты */
+        .payment-methods {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .pay-badge {
+            background: #16181f;
+            border: 1px solid #282c38;
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 11px;
+            color: #9ca3af;
+            font-weight: 600;
+        }
+
+        /* Главный баннер */
+        .hero {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .hero h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+        .hero h1 span {
+            background: linear-gradient(90deg, #fef08a, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        /* Переключатель категорий */
+        .categories {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+        }
+        .cat-btn {
+            background: #16181f;
+            border: 1px solid #282c38;
+            color: #9ca3af;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn.active {
+            background: #eab308;
+            color: #000000;
+            border-color: #eab308;
+            box-shadow: 0 0 14px rgba(234, 179, 8, 0.4);
+        }
+
+        /* Ввод Stars */
+        .custom-input-box {
+            background: #16181f;
+            border: 1px solid #282c38;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .custom-input-box h3 {
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+        .input-field {
+            width: 100%;
+            background: #0d0e12;
+            border: 1px solid #282c38;
+            border-radius: 12px;
+            padding: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 12px;
+            outline: none;
+        }
+        .input-field:focus {
+            border-color: #eab308;
+        }
+        .main-btn {
+            width: 100%;
+            background: #eab308;
+            color: #000000;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(234, 179, 8, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: #16181f;
+            border: 1px solid #282c38;
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .card-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #eab308;
+            color: #000000;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #ffffff;
+        }
+        .card-desc {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+        .card-price {
+            font-size: 15px;
+            font-weight: 800;
+            color: #fef08a;
+            margin-bottom: 10px;
+        }
+        .card-btn {
+            background: #252a38;
+            color: #ffffff;
+            border: 1px solid #363c50;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .card-btn:active {
+            background: #eab308;
+            color: #000000;
+        }
+
+        /* Список номеров */
+        .number-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .number-item {
+            background: #16181f;
+            border: 1px solid #282c38;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .country-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .flag {
+            font-size: 24px;
+        }
+        .country-name {
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .country-sub {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+        .number-buy {
+            text-align: right;
+        }
+        .number-price {
+            font-weight: 800;
+            color: #fef08a;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .small-btn {
+            background: #eab308;
+            color: #000;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* Нижнее меню */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(22, 24, 31, 0.95);
+            border-top: 1px solid #282c38;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            backdrop-filter: blur(10px);
+        }
+        .nav-item {
+            color: #6b7280;
+            font-size: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+        .nav-item.active {
+            color: #fef08a;
+        }
+        .nav-icon {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка -->
+    <div class="header">
+        <div class="brand">
+            <div class="avatar">H</div>
+            <span>HustleShop</span>
+        </div>
+        <!-- Селектор валюты -->
+        <select id="currency-select" class="currency-select" onchange="changeCurrency()">
+            <option value="KZT">₸ KZT</option>
+            <option value="RUB">₽ RUB</option>
+            <option value="USD">$ USD</option>
+            <option value="EUR">€ EUR</option>
+        </select>
+    </div>
+
+    <!-- Заголовок -->
+    <div class="hero">
+        <div class="badge">★ Мгновенная автоматическая выдача</div>
+        <h1>Купить<br><span>Telegram Goods</span></h1>
+        <p>Международная оплата • Автоконвертация</p>
+    </div>
+
+    <!-- Плашки методов оплаты -->
+    <div class="payment-methods">
+        <span class="pay-badge">💳 Kaspi Gold</span>
+        <span class="pay-badge">🇷🇺 СБП / Мир</span>
+        <span class="pay-badge">🌐 Visa / Mastercard</span>
+        <span class="pay-badge">💎 CryptoBot / TON</span>
+    </div>
+
+    <!-- Категории -->
+    <div class="categories">
+        <button class="cat-btn active" onclick="openTab('stars-tab', this)">★ Stars</button>
+        <button class="cat-btn" onclick="openTab('premium-tab', this)">💎 Premium</button>
+        <button class="cat-btn" onclick="openTab('numbers-tab', this)">📱 Номера</button>
+        <button class="cat-btn" onclick="openTab('gifts-tab', this)">🎁 Подарки</button>
+        <button class="cat-btn" onclick="openTab('accounts-tab', this)">🛡️ Аккаунты</button>
+    </div>
+
+    <!-- ================= STARS ================= -->
+    <div id="stars-tab" class="tab-content active">
+        <div class="custom-input-box">
+            <h3>Введите количество ⭐</h3>
+            <input type="number" id="custom-stars" class="input-field" placeholder="От 50 до 50 000 ⭐" min="50" max="50000">
+            <button class="main-btn" onclick="buyCustomStars()">Купить Stars</button>
+        </div>
+
+        <div class="section-title">Пакеты Stars</div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">50 ⭐</div>
+                <div class="card-price" data-kzt="490">490 ₸</div>
+                <button class="card-btn" onclick="buyItem('50 Stars', 490)">Купить</button>
+            </div>
+            <div class="card">
+                <div class="card-badge">ХИТ</div>
+                <div class="card-title">100 ⭐</div>
+                <div class="card-price" data-kzt="950">950 ₸</div>
+                <button class="card-btn" onclick="buyItem('100 Stars', 950)">Купить</button>
+            </div>
+            <div class="card">
+                <div class="card-title">250 ⭐</div>
+                <div class="card-price" data-kzt="2200">2 200 ₸</div>
+                <button class="card-btn" onclick="buyItem('250 Stars', 2200)">Купить</button>
+            </div>
+            <div class="card">
+                <div class="card-title">500 ⭐</div>
+                <div class="card-price" data-kzt="4400">4 400 ₸</div>
+                <button class="card-btn" onclick="buyItem('500 Stars', 4400)">Купить</button>
+            </div>
+            <div class="card">
+                <div class="card-badge">ТОП</div>
+                <div class="card-title">1 000 ⭐</div>
+                <div class="card-price" data-kzt="8700">8 700 ₸</div>
+                <button class="card-btn" onclick="buyItem('1000 Stars', 8700)">Купить</button>
+            </div>
+            <div class="card">
+                <div class="card-title">2 500 ⭐</div>
+                <div class="card-price" data-kzt="21000">21 000 ₸</div>
+                <button class="card-btn" onclick="buyItem('2500 Stars', 21000)">Купить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PREMIUM ================= -->
+    <div id="premium-tab" class="tab-content">
+        <div class="section-title">Подписки Telegram Premium</div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-badge">ХИТ</div>
+                <div class="card-title">3 месяца 💎</div>
+                <div class="card-desc">Подарок на ваш аккаунт</div>
+                <div class="card-price" data-kzt="6200">6 200 ₸</div>
+                <button class="card-btn" onclick="buyItem('Premium 3 мес', 6200)">Купить</button>
+            </div>
+            <div class="card">
+                <div class="card-title">6 месяцев 💎</div>
+                <div class="card-desc">Подарок на ваш аккаунт</div>
+                <div class="card-price" data-kzt="8300">8 300 ₸</div>
+                <button class="card-btn" onclick="buyItem('Premium 6 мес', 8300)">Купить</button>
+            </div>
+            <div class="card">
+                <div class="card-badge">ВЫГОДА</div>
+                <div class="card-title">12 месяцев 💎</div>
+                <div class="card-desc">Максимальная выгода на 1 год</div>
+                <div class="card-price" data-kzt="15200">15 200 ₸</div>
+                <button class="card-btn" onclick="buyItem('Premium 12 мес', 15200)">Купить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= НОМЕРА ================= -->
+    <div id="numbers-tab" class="tab-content">
+        <div class="section-title">Виртуальные номера</div>
+        <div class="number-list">
+            <div class="number-item">
+                <div class="country-info">
+                    <span class="flag">🇰🇿</span>
+                    <div>
+                        <div class="country-name">Казахстан (+77)</div>
+                        <div class="country-sub">Быстрый SMS</div>
+                    </div>
+                </div>
+                <div class="number-buy">
+                    <div class="number-price" data-kzt="650">650 ₸</div>
+                    <button class="small-btn" onclick="buyItem('Номер Казахстан (+77)', 650)">Взять</button>
+                </div>
+            </div>
+            <div class="number-item">
+                <div class="country-info">
+                    <span class="flag">🇷🇺</span>
+                    <div>
+                        <div class="country-name">Россия (+79)</div>
+                        <div class="country-sub">Чистый пул</div>
+                    </div>
+                </div>
+                <div class="number-buy">
+                    <div class="number-price" data-kzt="550">550 ₸</div>
+                    <button class="small-btn" onclick="buyItem('Номер Россия (+79)', 550)">Взять</button>
+                </div>
+            </div>
+            <div class="number-item">
+                <div class="country-info">
+                    <span class="flag">🇺🇸</span>
+                    <div>
+                        <div class="country-name">США (+1)</div>
+                        <div class="country-sub">Под инвайт</div>
+                    </div>
+                </div>
+                <div class="number-buy">
+                    <div class="number-price" data-kzt="450">450 ₸</div>
+                    <button class="small-btn" onclick="buyItem('Номер США (+1)', 450)">Взять</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ПОДАРКИ ================= -->
+    <div id="gifts-tab" class="tab-content">
+        <div class="section-title">Коллекционные подарки</div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">Pepe NFT Gift 🐸</div>
+                <div class="card-price" data-kzt="3900">3 900 ₸</div>
+                <button class="card-btn" onclick="buyItem('Pepe NFT Gift', 3900)">Купить</button>
+            </div>
+            <div class="card">
+                <div class="card-badge">ХИТ</div>
+                <div class="card-title">Duck NFT Gift 🦆</div>
+                <div class="card-price" data-kzt="7900">7 900 ₸</div>
+                <button class="card-btn" onclick="buyItem('Duck NFT Gift', 7900)">Купить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= АККАУНТЫ ================= -->
+    <div id="accounts-tab" class="tab-content">
+        <div class="section-title">Готовые аккаунты</div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">Отлёжка 1+ мес 🛡️</div>
+                <div class="card-price" data-kzt="1500">1 500 ₸</div>
+                <button class="card-btn" onclick="buyItem('Аккаунт 1 мес отлёжка', 1500)">Купить</button>
+            </div>
+            <div class="card">
+                <div class="card-badge">ТОП</div>
+                <div class="card-title">Отлёжка 6+ мес ⚡</div>
+                <div class="card-price" data-kzt="2800">2 800 ₸</div>
+                <button class="card-btn" onclick="buyItem('Аккаунт 6 мес отлёжка', 2800)">Купить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижнее меню -->
+    <div class="nav-bar">
+        <div class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Статистика</span>
+        </div>
+        <div class="nav-item" onclick="openTab('numbers-tab', document.querySelectorAll('.cat-btn')[2])">
+            <span class="nav-icon">📱</span>
+            <span>Номера</span>
+        </div>
+        <div class="nav-item active" onclick="openTab('stars-tab', document.querySelectorAll('.cat-btn')[0])">
+            <span class="nav-icon">🛍️</span>
+            <span>Магазин</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Профиль</span>
+        </div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Курсы валют относительно Тенге (KZT)
+        const rates = {
+            KZT: 1,
+            RUB: 0.18,  // ~1 тенге = 0.18 руб
+            USD: 0.0021, // ~1 тенге = 0.0021 $
+            EUR: 0.0019  // ~1 тенге = 0.0019 €
+        };
+
+        const symbols = {
+            KZT: '₸',
+            RUB: '₽',
+            USD: '$',
+            EUR: '€'
+        };
+
+        function changeCurrency() {
+            const curr = document.getElementById('currency-select').value;
+            const rate = rates[curr];
+            const symbol = symbols[curr];
+
+            document.querySelectorAll('[data-kzt]').forEach(el => {
+                const kztPrice = parseFloat(el.getAttribute('data-kzt'));
+                const converted = (kztPrice * rate).toFixed(curr === 'KZT' ? 0 : 2);
+                el.innerText = `${converted} ${symbol}`;
+            });
+        }
+
+        function openTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            if(element) element.classList.add('active');
+        }
+
+        function buyCustomStars() {
+            let count = document.getElementById('custom-stars').value;
+            if (!count || count < 50) {
+                alert('Минимальное количество — 50 Stars');
+                return;
+            }
+            let kztPrice = Math.round(count * 9.5);
+            let selectedCurrency = document.getElementById('currency-select').value;
+            
+            tg.sendData(JSON.stringify({ 
+                title: `${count} Stars`, 
+                price_kzt: kztPrice, 
+                currency: selectedCurrency 
+            }));
+            tg.close();
+        }
+
+        function buyItem(title, kztPrice) {
+            let selectedCurrency = document.getElementById('currency-select').value;
+            tg.sendData(JSON.stringify({ 
+                title: title, 
+                price_kzt: kztPrice, 
+                currency: selectedCurrency 
+            }));
+            tg.close();
+        }
+    </script>
+</body>
+</html>
